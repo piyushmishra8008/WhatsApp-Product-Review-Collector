@@ -11,6 +11,13 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const userState = {};
+pool.connect()
+  .then(client => {
+    console.log('✅ Connected to Supabase via IPv4!');
+    client.release();
+  })
+  .catch(err => console.error('❌ DB connection failed:', err.stack));
+
 
 app.post('/whatsapp', async (req, res) => {
   try {
