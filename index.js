@@ -13,11 +13,22 @@ app.use(cors());
 const userState = {};
 pool.connect()
   .then(client => {
-    console.log('✅ Connected to Supabase via IPv4!');
+    console.log('✅ Connected to Supabase/Postgres!');
     client.release();
   })
-  .catch(err => console.error('❌ DB connection failed:', err.stack));
-
+  .catch(err => {
+    console.error('❌ DB connection failed:', err.stack);
+  });
+  app.get('/test-db', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT NOW()');
+    console.log('✅ DB test successful:', result.rows[0].now);
+    res.json({ message: 'DB connected!', time: result.rows[0].now });
+  } catch (err) {
+    console.error('❌ DB test failed:', err.stack);
+    res.status(500).json({ error: 'DB connection failed' });
+  }
+});
 
 app.post('/whatsapp', async (req, res) => {
   try {
